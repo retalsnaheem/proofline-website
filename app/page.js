@@ -306,11 +306,12 @@ const ProoflineWebsite = () => {
     <div className="grid md:grid-cols-3 gap-8">
       {[
         {
-          title: "Gong vs Chorus vs Revenue.io: What 23 Sales Leaders Actually Said",
-          excerpt: "After 23 anonymous calls with revenue leaders, here's what they wish they'd known before buying conversation intelligence platforms.",
-          readTime: "12 min read",
-          category: "RevOps",
-          link: "/blog/first-blog"
+          
+        title: "Gong vs Chorus vs Revenue.io: What 23 Sales Leaders Actually Said",
+        excerpt: "After 23 anonymous calls with revenue leaders, here's what they wish they'd known before buying conversation intelligence platforms.",
+        readTime: "12 min read",
+        category: "RevOps",
+        link: "/blog/gong-vs-chorus-revenue-io-sales-leaders"
         },
         {
           title: "Outreach vs Salesloft vs Apollo: Which SDRs Actually Prefer", 
