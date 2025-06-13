@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { ArrowLeft, Clock, User } from 'lucide-react';
+import { ArrowLeft, Clock, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 
 const BlogPage = () => {
