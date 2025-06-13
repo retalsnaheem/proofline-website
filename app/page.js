@@ -291,51 +291,56 @@ const ProoflineWebsite = () => {
       </section>
 
       {/* Blog Preview */}
-      <section id="blog" className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-              Real User Insights
-            </h2>
-            <a href="/blog" className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
-              <span>View All</span>
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-          
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "What Gong Users Wish They'd Known Before Buying",
-                excerpt: "Implementation timelines, hidden costs, and workflow disruptions that 8 revenue leaders shared about their Gong rollout.",
-                readTime: "8 min read",
-                category: "User Stories"
-              },
-              {
-                title: "Apollo vs Outreach: Real SDR Perspectives",
-                excerpt: "We asked 12 sales reps which tool they'd choose if it was their own money. Here's what they said.",
-                readTime: "6 min read",
-                category: "Head-to-Head"
-              },
-              {
-                title: "The Clari Questions Your Sales Rep Won't Answer",
-                excerpt: "Revenue operations leaders share the tough questions that expose whether Clari will actually work for your forecasting.",
-                readTime: "10 min read",
-                category: "Buyer's Guide"
-              }
-            ].map((post, index) => (
-              <article key={index} className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 cursor-pointer group">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-sm text-cyan-400 font-semibold">{post.category}</span>
-                  <span className="text-sm text-gray-400">{post.readTime}</span>
-                </div>
-                <h3 className="text-xl font-semibold mb-3 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
-                <p className="text-gray-300 leading-relaxed">{post.excerpt}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+<section id="blog" className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm">
+  <div className="max-w-6xl mx-auto">
+    <div className="flex justify-between items-center mb-12">
+      <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+        Real User Insights
+      </h2>
+      <a href="/blog" className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
+        <span>View All</span>
+        <ArrowRight className="w-4 h-4" />
+      </a>
+    </div>
+    
+    <div className="grid md:grid-cols-3 gap-8">
+      {[
+        {
+          title: "Gong vs Chorus vs Revenue.io: What 23 Sales Leaders Actually Said",
+          excerpt: "After 23 anonymous calls with revenue leaders, here's what they wish they'd known before buying conversation intelligence platforms.",
+          readTime: "12 min read",
+          category: "RevOps",
+          link: "/blog/first-blog"
+        },
+        {
+          title: "Outreach vs Salesloft vs Apollo: Which SDRs Actually Prefer", 
+          excerpt: "We asked 31 SDRs which sales engagement platform they'd choose with their own money. The answers surprised us.",
+          readTime: "10 min read",
+          category: "Sales Tools", 
+          link: "/blog/outreach-vs-salesloft-apollo-sdrs"
+        },
+        {
+          title: "The Real Timeline for HubSpot Implementation: What 19 Marketing Teams Actually Experienced",
+          excerpt: "HubSpot says 30-60 days. Marketing ops leaders tell a different story. Not a single team achieved full implementation in under 90 days.",
+          readTime: "11 min read",
+          category: "Implementation",
+          link: "/blog/hubspot-implementation-timeline-reality"
+        }
+      ].map((post, index) => (
+        <article key={index} className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 cursor-pointer group">
+          <a href={post.link} className="block">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm text-cyan-400 font-semibold">{post.category}</span>
+              <span className="text-sm text-gray-400">{post.readTime}</span>
+            </div>
+            <h3 className="text-xl font-semibold mb-3 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
+            <p className="text-gray-300 leading-relaxed">{post.excerpt}</p>
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
 
       {/* Footer CTA */}
       <section className="relative z-10 px-6 py-20">
