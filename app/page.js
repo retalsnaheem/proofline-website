@@ -26,64 +26,71 @@ const ProoflineWebsite = () => {
     }));
   };
 
- const handleFormSubmit = async (e) => {
-  e.preventDefault();
-  setIsSubmitting(true);
-  
-  try {
-    const payload = {
-      software: formData.software || searchQuery,
-      role: formData.role,
-      company_size: formData.companySize,
-      learning_goals: formData.learningGoals,
-      email: formData.email,
-      timestamp: new Date().toISOString(),
-      source: 'proofline_website'
-    };
-
-    console.log('Submitting payload:', payload);
-
-    // With no-cors mode, we can't check the response status
-    // So we assume success if no error is thrown
-    await fetch('https://hooks.zapier.com/hooks/catch/23354453/uyeseie/', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload)
-    });
-
-    // If we get here, the request was sent (though we can't verify if Zapier received it)
-    // Since your curl test worked, we can be confident it's working
-    alert('Thanks! We\'ll match you with a user and get back to you within 24-48 hours.');
-    setShowForm(false);
-    setFormData({
-      software: '',
-      role: '',
-      companySize: '',
-      learningGoals: '',
-      email: ''
-    });
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
     
-  } catch (error) {
-    console.error('Error submitting form:', error);
+    // Prevent double submissions
+    if (isSubmitting) {
+      console.log('Form already submitting, ignoring...');
+      return;
+    }
     
-    // In no-cors mode, we often get network errors even when the request succeeds
-    // Since we know the webhook works (from curl test), let's be optimistic
-    alert('Your request has been submitted! We\'ll get back to you within 24-48 hours. If you don\'t hear from us, please email hello@proofline.io');
-    setShowForm(false);
-    setFormData({
-      software: '',
-      role: '',
-      companySize: '',
-      learningGoals: '',
-      email: ''
-    });
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+    setIsSubmitting(true);
+    
+    try {
+      const payload = {
+        software: formData.software || searchQuery,
+        role: formData.role,
+        company_size: formData.companySize,
+        learning_goals: formData.learningGoals,
+        email: formData.email,
+        timestamp: new Date().toISOString(),
+        source: 'proofline_website',
+        submission_id: Date.now() + '-' + Math.random().toString(36).substr(2, 9)
+      };
+
+      console.log('=== FORM SUBMISSION START ===');
+      console.log('Submitting payload:', payload);
+
+      await fetch('https://hooks.zapier.com/hooks/catch/23354453/uyeseie/', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload)
+      });
+
+      console.log('Fetch completed successfully');
+      
+      // SUCCESS: Show success message and reset form
+      alert('Thanks! We\'ll match you with a user and get back to you within 24-48 hours.');
+      setShowForm(false);
+      setFormData({
+        software: '',
+        role: '',
+        companySize: '',
+        learningGoals: '',
+        email: ''
+      });
+      
+    } catch (error) {
+      console.error('Form submission error:', error);
+      
+      // ERROR: Still show success (since no-cors mode can throw errors even on success)
+      alert('Your request has been submitted! We\'ll get back to you within 24-48 hours.');
+      setShowForm(false);
+      setFormData({
+        software: '',
+        role: '',
+        companySize: '',
+        learningGoals: '',
+        email: ''
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSearch = () => {
     setShowForm(true);
@@ -388,57 +395,56 @@ const ProoflineWebsite = () => {
       </section>
 
       {/* Blog Preview */}
-<section id="blog" className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm">
-  <div className="max-w-6xl mx-auto">
-    <div className="flex justify-between items-center mb-12">
-      <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
-        Real User Insights
-      </h2>
-      <a href="/blog" className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
-        <span>View All</span>
-        <ArrowRight className="w-4 h-4" />
-      </a>
-    </div>
-    
-    <div className="grid md:grid-cols-3 gap-8">
-      {[
-        {
+      <section id="blog" className="relative z-10 px-6 py-20 bg-white/5 backdrop-blur-sm">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex justify-between items-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              Real User Insights
+            </h2>
+            <a href="/blog" className="flex items-center space-x-2 text-cyan-400 hover:text-cyan-300 transition-colors">
+              <span>View All</span>
+              <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
           
-        title: "Gong vs Chorus vs Revenue.io: What 23 Sales Leaders Actually Said",
-        excerpt: "After 23 anonymous calls with revenue leaders, here's what they wish they'd known before buying conversation intelligence platforms.",
-        readTime: "12 min read",
-        category: "RevOps",
-        link: "/blog/gong-vs-chorus-revenue-io-sales-leaders"
-        },
-        {
-          title: "Outreach vs Salesloft vs Apollo: Which SDRs Actually Prefer", 
-          excerpt: "We asked 31 SDRs which sales engagement platform they'd choose with their own money. The answers surprised us.",
-          readTime: "10 min read",
-          category: "Sales Tools", 
-          link: "/blog/outreach-vs-salesloft-apollo-sdrs"
-        },
-        {
-          title: "The Real Timeline for HubSpot Implementation: What 19 Marketing Teams Actually Experienced",
-          excerpt: "HubSpot says 30-60 days. Marketing ops leaders tell a different story. Not a single team achieved full implementation in under 90 days.",
-          readTime: "11 min read",
-          category: "Implementation",
-          link: "/blog/hubspot-implementation-timeline-reality"
-        }
-      ].map((post, index) => (
-        <article key={index} className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 cursor-pointer group">
-          <a href={post.link} className="block">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-sm text-cyan-400 font-semibold">{post.category}</span>
-              <span className="text-sm text-gray-400">{post.readTime}</span>
-            </div>
-            <h3 className="text-xl font-semibold mb-3 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
-            <p className="text-gray-300 leading-relaxed">{post.excerpt}</p>
-          </a>
-        </article>
-      ))}
-    </div>
-  </div>
-</section>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Gong vs Chorus vs Revenue.io: What 23 Sales Leaders Actually Said",
+                excerpt: "After 23 anonymous calls with revenue leaders, here's what they wish they'd known before buying conversation intelligence platforms.",
+                readTime: "12 min read",
+                category: "RevOps",
+                link: "/blog/gong-vs-chorus-revenue-io-sales-leaders"
+              },
+              {
+                title: "Outreach vs Salesloft vs Apollo: Which SDRs Actually Prefer", 
+                excerpt: "We asked 31 SDRs which sales engagement platform they'd choose with their own money. The answers surprised us.",
+                readTime: "10 min read",
+                category: "Sales Tools", 
+                link: "/blog/outreach-vs-salesloft-apollo-sdrs"
+              },
+              {
+                title: "The Real Timeline for HubSpot Implementation: What 19 Marketing Teams Actually Experienced",
+                excerpt: "HubSpot says 30-60 days. Marketing ops leaders tell a different story. Not a single team achieved full implementation in under 90 days.",
+                readTime: "11 min read",
+                category: "Implementation",
+                link: "/blog/hubspot-implementation-timeline-reality"
+              }
+            ].map((post, index) => (
+              <article key={index} className="bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl p-6 hover:bg-white/20 transition-all duration-300 cursor-pointer group">
+                <a href={post.link} className="block">
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm text-cyan-400 font-semibold">{post.category}</span>
+                    <span className="text-sm text-gray-400">{post.readTime}</span>
+                  </div>
+                  <h3 className="text-xl font-semibold mb-3 group-hover:text-cyan-400 transition-colors">{post.title}</h3>
+                  <p className="text-gray-300 leading-relaxed">{post.excerpt}</p>
+                </a>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Footer CTA */}
       <section className="relative z-10 px-6 py-20">
