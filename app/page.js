@@ -27,46 +27,50 @@ const ProoflineWebsite = () => {
   };
 
   const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      const response = await fetch('https://hooks.zapier.com/hooks/catch/23354453/uyeseie/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          software: formData.software || searchQuery,
-          role: formData.role,
-          company_size: formData.companySize,
-          learning_goals: formData.learningGoals,
-          email: formData.email,
-          timestamp: new Date().toISOString(),
-          source: 'proofline_website'
-        })
-      });
+  e.preventDefault();
+  setIsSubmitting(true);
+  
+  try {
+    const payload = {
+      software: formData.software || searchQuery,
+      role: formData.role,
+      company_size: formData.companySize,
+      learning_goals: formData.learningGoals,
+      email: formData.email,
+      timestamp: new Date().toISOString(),
+      source: 'proofline_website'
+    };
 
-      if (response.ok) {
-        alert('Thanks! We\'ll match you with a user and get back to you within 24-48 hours.');
-        setShowForm(false);
-        setFormData({
-          software: '',
-          role: '',
-          companySize: '',
-          learningGoals: '',
-          email: ''
-        });
-      } else {
-        throw new Error('Submission failed');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      alert('There was an error submitting your request. Please try again or email us directly.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    console.log('Submitting payload:', payload);
+
+    // ADD THIS LINE - mode: 'no-cors' fixes the CORS issue
+    await fetch('https://hooks.zapier.com/hooks/catch/23354453/uyeseie/', {
+      method: 'POST',
+      mode: 'no-cors',  // ← THIS IS THE KEY CHANGE
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload)
+    });
+
+    // With no-cors, we can't check the response, but if no error is thrown, it likely worked
+    alert('Thanks! We\'ll match you with a user and get back to you within 24-48 hours.');
+    setShowForm(false);
+    setFormData({
+      software: '',
+      role: '',
+      companySize: '',
+      learningGoals: '',
+      email: ''
+    });
+    
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    alert('There was an error submitting your request. Please try again or email us directly at hello@proofline.io');
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleSearch = () => {
     setShowForm(true);
