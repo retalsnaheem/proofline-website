@@ -6,10 +6,67 @@ const ProoflineWebsite = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isVisible, setIsVisible] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    software: '',
+    role: '',
+    companySize: '',
+    learningGoals: '',
+    email: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  const handleInputChange = (field, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      const response = await fetch('https://hooks.zapier.com/hooks/catch/23354453/uyeseie/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          software: formData.software || searchQuery,
+          role: formData.role,
+          company_size: formData.companySize,
+          learning_goals: formData.learningGoals,
+          email: formData.email,
+          timestamp: new Date().toISOString(),
+          source: 'proofline_website'
+        })
+      });
+
+      if (response.ok) {
+        alert('Thanks! We\'ll match you with a user and get back to you within 24-48 hours.');
+        setShowForm(false);
+        setFormData({
+          software: '',
+          role: '',
+          companySize: '',
+          learningGoals: '',
+          email: ''
+        });
+      } else {
+        throw new Error('Submission failed');
+      }
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error submitting your request. Please try again or email us directly.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleSearch = () => {
     setShowForm(true);
@@ -85,21 +142,27 @@ const ProoflineWebsite = () => {
               <div className="bg-slate-800 rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                 <h3 className="text-2xl font-bold mb-6 text-center">Tell us about your evaluation</h3>
                 
-                <div className="space-y-6">
+                <form onSubmit={handleFormSubmit} className="space-y-6">
                   <div>
                     <label className="block text-sm font-medium mb-2">What software are you evaluating?</label>
                     <input 
                       type="text" 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      value={formData.software || searchQuery}
+                      onChange={(e) => handleInputChange('software', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
                       placeholder="e.g., Gong, Apollo, Salesforce, Clari"
+                      required
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium mb-2">What's your role?</label>
-                    <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-cyan-400">
+                    <select 
+                      value={formData.role}
+                      onChange={(e) => handleInputChange('role', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-cyan-400"
+                      required
+                    >
                       <option value="">Select your role...</option>
                       <option value="ceo">CEO/Founder</option>
                       <option value="cto">CTO/VP Engineering</option>
@@ -113,7 +176,12 @@ const ProoflineWebsite = () => {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Company size</label>
-                    <select className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-cyan-400">
+                    <select 
+                      value={formData.companySize}
+                      onChange={(e) => handleInputChange('companySize', e.target.value)}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:border-cyan-400"
+                      required
+                    >
                       <option value="">Select company size...</option>
                       <option value="startup">Startup (1-50 employees)</option>
                       <option value="small">Small (51-200 employees)</option>
@@ -125,32 +193,44 @@ const ProoflineWebsite = () => {
                   <div>
                     <label className="block text-sm font-medium mb-2">What do you want to learn?</label>
                     <textarea 
+                      value={formData.learningGoals}
+                      onChange={(e) => handleInputChange('learningGoals', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400 h-24"
                       placeholder="e.g., Implementation challenges, hidden costs, daily workflow impact, comparison to alternatives..."
-                    ></textarea>
+                      required
+                    />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium mb-2">Your email</label>
                     <input 
                       type="email" 
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:border-cyan-400"
                       placeholder="you@company.com"
+                      required
                     />
                   </div>
 
                   <div className="flex gap-4">
                     <button 
+                      type="button"
                       onClick={() => setShowForm(false)}
                       className="flex-1 px-6 py-3 bg-white/10 border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all duration-300"
+                      disabled={isSubmitting}
                     >
                       Cancel
                     </button>
-                    <button className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl text-white hover:from-cyan-400 hover:to-purple-400 transition-all duration-300">
-                      Get My Interview ($249)
+                    <button 
+                      type="submit"
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl text-white hover:from-cyan-400 hover:to-purple-400 transition-all duration-300 disabled:opacity-50"
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? 'Submitting...' : 'Get My Interview ($249)'}
                     </button>
                   </div>
-                </div>
+                </form>
               </div>
             </div>
           )}
